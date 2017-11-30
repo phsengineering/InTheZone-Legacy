@@ -1,4 +1,4 @@
-#pragma config(Sensor, dgtl7,  solenoid,            sensorDigitalOut)
+#pragma config(Sensor, dgtl3,  solenoid,            sensorDigitalOut)
 task main()
 {
 while(true)                   // Loop Forever
