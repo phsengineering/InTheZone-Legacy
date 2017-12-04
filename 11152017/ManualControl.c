@@ -111,6 +111,6 @@ task newmatics() //this is temporary. we need the solenoid to stay up after you 
 task main() { //initialize the main task
 	while(true) { //keep listening for new VexNet input
 	startTask(UserDrive); //keep referring back to the manual control algorithm
-	startTask(newmatics); //Yes. It's spelled wrong. 
+	startTask(newmatics); //Yes. It's spelled wrong
 }
 }
