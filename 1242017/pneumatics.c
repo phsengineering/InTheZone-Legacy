@@ -67,7 +67,7 @@ task UserDrive()
 			right_drive_pwr = 0;
 
 		// "precise control" buttons
-		if(vexRT[Btn5D] + vexRT[Btn5U] + vexRT[Btn6D] + vexRT[Btn6U] > 0)
+1	if(vexRT[Btn5D] + vexRT[Btn5U] + vexRT[Btn6D] + vexRT[Btn6U] > 0)
 		{
 			left_drive_pwr *= 0.7;
 			right_drive_pwr *= 0.7;
@@ -112,7 +112,7 @@ task newmatics()
 	}
 }
 	task main() { //initialize the main task
-		SensorValue[Solenoid] = 0;
+		SensorValue[Solenoid] = 1;
 		while(true) { //keep listening for new VexNet input
 			startTask(UserDrive); //keep referring back to the manual control algorithm
 			startTask(newmatics); //yes. it's spelled wrong.
