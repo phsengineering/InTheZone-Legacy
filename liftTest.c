@@ -1,4 +1,4 @@
-#pragma config(Motor,  port6,           rightAngle,    tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port6,           armAngle,      tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port7,           rightArm,      tmotorVex393TurboSpeed_MC29, openLoop)
 #pragma config(Motor,  port8,           leftArm,       tmotorVex393TurboSpeed_MC29, openLoop, reversed)
 #pragma config(Motor,  port9,           servoGrab,     tmotorServoStandard, openLoop)
@@ -7,10 +7,14 @@
 task main()
 {
 	while(true) {
-motor[leftArm] = vexRT[Ch1];
-motor[rightArm] = vexRT[Ch1];
-motor[servoGrab] = vexRT[Ch2];
-motor[rightAngle] = vexRT[Ch2];
-
-}
+		motor[leftArm] = vexRT[Ch2]/2;
+		motor[rightArm] = vexRT[Ch2]/2;
+		motor[armAngle] = vexRT[Ch1]/2;
+		if(vexRT[Btn5U] == 1) {
+			motor[servoGrab] = 127;
+		}
+		else if (vexRT[Btn5U] == 0) {
+			motor[servoGrab] = 0;
+		}
+	}
 } //this is some dank code
