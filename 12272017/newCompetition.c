@@ -92,7 +92,7 @@ task autonomous() {
 	motor[DriveRight_2] = -120;
 	wait1Msec(2000);
 	startTask(resetMotors); //stop all of the motors. In the competition template,
-                          //manual driver control takes over after this sequence
+	//manual driver control takes over after this sequence
 }
 
 #define     JOY_DRIVE_V     vexJSLeftV
@@ -155,13 +155,6 @@ task userDrive()
 		else
 			right_drive_pwr = 0;
 
-		// "precise control" buttons
-		if(vexRT[Btn5D] + vexRT[Btn5U] + vexRT[Btn6D] + vexRT[Btn6U] > 0)
-		{
-			left_drive_pwr *= 0.7;
-			right_drive_pwr *= 0.7;
-		}
-
 		//** antijerk
 
 		// left
@@ -179,19 +172,62 @@ task userDrive()
 		wait1Msec(1);
 	}
 }
-
+task armAngleControl() {
+	while(true) {
+		if(vexRT[Btn6UXmtr2] == 1) {
+			motor[armAngle] = 63;
+		}
+		else {
+			motor[armAngle] = 0;
+		}
+		if(vexRT[Btn5UXmtr2] == 1) {
+			motor[armAngle] = -63;
+		}
+		else {
+			motor[armAngle] = 0;
+		}
+	}
+}
+task overrideControl() {
+	while(true) {
+		if(vexRT[Btn8U] == 1) {
+			motor[armAngle] = 63;
+		}
+		else {
+			motor[armAngle] = 0;
+		}
+		if(vexRT[Btn8D] == 1) {
+			motor[armAngle] = -63;
+		}
+		else {
+			motor[armAngle] = 0;
+		}
+		if(vexRT[Btn7L] == 1) {
+			motor[leftArm] = 63;
+		}
+		else {
+			motor[leftArm] = 0;
+		}
+		if(vexRT[Btn7R] == 1) {
+			motor[rightArm] = 63;
+		}
+		else {
+			motor[rightArm] = 0;
+		}
+	}
+}
 task liftControl() {
-while(true) {
-	if(vexRT[Btn6D] == 1) {
-		motor[leftArm] = vexRT[Ch2]/2; //get input from the right side controller joystick and assign it to the left side arm
-		motor[rightArm] = vexRT[Ch2]/2; //same as above but for the right side of the lift system
-		motor[armAngle] = vexRT[Ch1]/2; //assign motor power levels to the frame motors (torque oriented)
-	}
-	else if (vexRT[Btn6D] == 0) {
-		motor[leftArm] = vexRT[Ch2Xmtr2]/2; //get input from the right side controller joystick and assign it to the left side arm
-		motor[rightArm] = vexRT[Ch2Xmtr2]/2; //same as above but for the right side of the lift system
-		motor[armAngle] = vexRT[Ch1Xmtr2]/2; //assign motor power levels to the frame motors (torque oriented)
-	}
+	while(true) {
+		if(vexRT[Btn6D] == 1) {
+			motor[leftArm] = vexRT[Ch2]/2; //get input from the right side controller joystick and assign it to the left side arm
+			motor[rightArm] = vexRT[Ch2]/2; //same as above but for the right side of the lift system
+			startTask(overrideControl);
+		}
+		else if (vexRT[Btn6D] == 0) {
+			motor[leftArm] = vexRT[Ch3Xmtr2]/2; //get input from the right side controller joystick and assign it to the left side arm
+			motor[rightArm] = vexRT[Ch2Xmtr2]/2; //same as above but for the right side of the lift system
+			startTask(armAngleControl);
+		}
 		if(vexRT[Btn5U] == 1 || vexRT[Btn5UXmtr2] == 1) { //if the left shoulder button is enabled
 			setServo(servoGrab, 48); //set the servo's position to 127 (this may be changed based on required clearance)
 		}
@@ -200,12 +236,13 @@ while(true) {
 		}
 	}
 }
+
 task main()
 {
-startTask(userDrive);
+	startTask(userDrive);
 
 	// Start driver lift control
-  startTask(liftControl);
+	startTask(liftControl);
 
 	// Everything done in other tasks
 	while( true )
