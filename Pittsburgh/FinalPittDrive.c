@@ -42,10 +42,6 @@ task resetMotors() { //this will stop all of the motors
 task autonomous() {
 	startTask(resetEverything); //start out by resetting all of the motors/sensors
 	SensorValue[solenoid] = 0; //reset the pneumatics controller
-	while(SensorValue[rightEncoder] > -220) { //move the robot slightly to the left in order to get a clear path
-		motor[DriveRight_1] = 27;               //to the mobile goal
-		motor[DriveRight_2] = 27;
-	}
 	startTask(resetEverything);
 	while(SensorValue[rightEncoder] >-900 || SensorValue[leftEncoder] < 900) { //move the robot to the mobile goal
 		motor[DriveLeft_1] = 63; //move at half speed
@@ -91,7 +87,7 @@ task autonomous() {
 	}
 	startTask(resetEverything);
 	SensorValue[solenoid] = 0; //drop the pistons in order to score
-
+  wait(1);
 	motor[DriveLeft_1] = -120; //back out of the scoring area for two seconds
 	motor[DriveLeft_2] = -120;
 	motor[DriveRight_1] = -120;
