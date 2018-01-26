@@ -87,6 +87,12 @@ task liftControl() {
 	else {
 		motor[liftArm] = 0;
 	}
+	if(vexRT[Btn5U] = 1) {
+		motor[liftArm] = 127;
+	}
+	else {
+		motor[liftArm] = 0;
+	}
 }
 task main() { //initialize the main task
 	while(true) { //keep listening for new VexNet input
