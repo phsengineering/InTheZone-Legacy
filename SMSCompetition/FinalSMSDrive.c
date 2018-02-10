@@ -153,8 +153,8 @@ task ArcadeDrive()
 	while( true )
 	{
 		// Get joystick H and V control
-		ctl_v = vexRT[ Ch2 ];
-		ctl_h = vexRT[ Ch3 ];
+		ctl_v = vexRT[ JOY_DRIVE_V ];
+		ctl_h = vexRT[ JOY_DRIVE_H ];
 
 		// Ignore joystick near center
 		if( (abs(ctl_v) <= JOY_THRESHOLD) && (abs(ctl_h) <= JOY_THRESHOLD) )
@@ -206,13 +206,13 @@ task usercontrol()
 {
 	SensorValue(clawPotentiometer) = 0;
 	// Start motor slew rate control
-	// startTask(MotorSlewRateTask);
+	startTask(MotorSlewRateTask);
 
 	// Start driver control tasks
 	startTask(ArcadeDrive);
 
 	// Start driver lift control
-	//startTask(liftControl);
+	startTask(liftControl);
 
 	// Everything done in other tasks
 	while( true )
