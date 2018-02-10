@@ -1,4 +1,4 @@
-#pragma config(Sensor, in1,    clawPotentiometer, sensorPotentiometer) //sensors are not being used, using wait(s) instead
+#pragma config(Sensor, in1,    clawPotentiometer, sensorPotentiometer)
 #pragma config(Sensor, dgtl9,  leftEncoder,    sensorQuadEncoder)
 #pragma config(Sensor, dgtl11, rightEncoder,   sensorQuadEncoder)
 #pragma config(Motor,  port2,           DriveLeft_1,   tmotorServoContinuousRotation, openLoop, reversed)
@@ -20,19 +20,19 @@ void pre_auton()
 	SensorValue[leftEncoder] = 0;
 }
 task autonomous() {
-	motor[liftMotor] = 63; //bring up the lift system motor
+	motor[liftMotor] = 63;
 	wait(1);
 	motor[liftMotor] = 0;
-	motor[DriveLeft_1] = 127; //move forward at full speed for 2 seconds
+	motor[DriveLeft_1] = 127;
 	motor[DriveLeft_2] = 127;
 	motor[DriveRight_1] = 127;
 	motor[DriveRight_2] = 127;
 	wait1Msec(2000);
-	motor[DriveLeft_1] = 0; //stop all motors
+	motor[DriveLeft_1] = 0;
 	motor[DriveLeft_2] = 0;
 	motor[DriveRight_1] = 0;
 	motor[DriveRight_2] = 0;
-	motor[clawMotor] = 63; //open the claw, get ready for driver control
+	motor[clawMotor] = 63;
 	wait(1);
 	motor[clawMotor] = 0;
 }
@@ -111,7 +111,7 @@ task MotorSlewRateTask()
 
 
 void
-DriveLeftMotor( int value ) //send filtered integer values to cortex motors
+DriveLeftMotor( int value )
 {
 	motorReq[ DriveLeft_1 ] = value;
 	motorReq[ DriveLeft_2 ] = value;
@@ -161,21 +161,17 @@ task ArcadeDrive()
 		wait1Msec( 25 );
 	}
 }
-//task liftControl() {
-	//while(true) {
-
-	//}
-//}
-task clawControl() {
-	if(vexRT[Btn6UXmtr2] == 1) { //open claw when 6U is pressed
-		motor[clawMotor] = 63;
-		wait1Msec(100);
-		motor[clawMotor] = 0;
+task liftControl() {
+	while(true) {
+		motor[liftMotor] = vexRT[Ch2];
 	}
-	else if (vexRT[Btn6DXmtr2] == 1) { //close claw when 6D is pressed
+}
+task clawControl() {
+	if(vexRT[Btn6U] == 1) {
+		motor[clawMotor] = 63;
+	}
+	else if (vexRT[Btn6D] == 1) {
 		motor[clawMotor] = -63;
-		wait1Msec(100);
-		motor[clawMotor] = 0;
 	}
 }
 //task mogoControl() {
@@ -200,7 +196,7 @@ task usercontrol()
 	startTask(ArcadeDrive);
 
 	// Start driver lift control
-	//startTask(liftControl);
+	startTask(liftControl);
 	//startTask(clawControl);
   //startTask(mogoControl);
 	// Everything done in other tasks
@@ -208,6 +204,5 @@ task usercontrol()
 	{
 		wait1Msec( 100 );
 		startTask(clawControl);
-		motor[liftMotor] = vexRT[Ch2Xmtr2]; //run the two lift system motors off of channel 2 input
 	}
 }
