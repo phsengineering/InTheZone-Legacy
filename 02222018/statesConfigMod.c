@@ -1,12 +1,9 @@
-#pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    mogoTrack,      sensorPotentiometer)
-#pragma config(Sensor, dgtl1,  mogoLimit,      sensorTouch)
-#pragma config(Sensor, I2C_1,  rightEncoder,   sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Sensor, I2C_2,  leftEncoder,    sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Sensor, I2C_1,  rightEncoder,   sensorNone)
+#pragma config(Sensor, I2C_2,  leftEncoder,    sensorNone)
 #pragma config(Motor,  port2,           mogoLift,      tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port3,           clawMotor,     tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port4,           liftMotor,     tmotorServoContinuousRotation, openLoop)
-#pragma config(Motor,  port5,           internalStack, tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port6,           DriveRight_1,  tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port7,           DriveRight_2,  tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port8,           DriveLeft_1,   tmotorServoContinuousRotation, openLoop, reversed)
@@ -20,15 +17,20 @@
 #pragma platform(VEX2)
 void pre_auton()
 {
-	//SensorValue[rightEncoder] = 0;
-	//SensorValue[leftEncoder] = 0;
 }
 task fullspeed() {
 
-  motor[DriveLeft_1] = 127;
-  motor[DriveLeft_2] = 127;
-  motor[DriveRight_1] = 127;
-  motor[DriveRight_2] = 127;
+  motor[DriveLeft_1] = 63;
+  motor[DriveLeft_2] = 63;
+  motor[DriveRight_1] = 63;
+  motor[DriveRight_2] = 63;
+}
+task fullreverse() {
+
+  motor[DriveLeft_1] = -63;
+  motor[DriveLeft_2] = -63;
+  motor[DriveRight_1] = -63;
+  motor[DriveRight_2] = -63;
 }
 task stopmotors() {
 
@@ -38,11 +40,43 @@ task stopmotors() {
   motor[DriveRight_2] = 0;
 }
 task autonomous() {
-motor[mogoLift] = -63;
-wait(1);
+	motor[mogoLift] = -63;
+wait(2);
 motor[mogoLift] = 0;
+ SensorValue[leftEncoder] = 0;
+ SensorValue[rightEncoder] = 0;
+ while(SensorValue[rightEncoder] < 1050) {
  startTask(fullspeed);
- wait(3);
+}
+ startTask(stopmotors);
+ motor[mogoLift] = 63;
+ wait(1.5);
+ motor[mogoLift] = 0;
+ while(SensorValue[rightEncoder] > 442) {
+   startTask(fullreverse);
+ }
+ startTask(stopmotors);
+ SensorValue[rightEncoder] = 0;
+ SensorValue[leftEncoder] = 0;
+ while(SensorValue[rightEncoder] > -500) {
+   motor[DriveLeft_1] = 50;
+   motor[DriveLeft_2] = 50;
+   motor[DriveRight_1] = -50;
+   motor[DriveRight_2] = -50;
+ }
+ startTask(stopmotors);
+ while(SensorValue[rightEncoder] < 450) {
+   startTask(fullspeed);
+ }
+ startTask(stopmotors);
+ motor[mogoLift] = -63;
+ wait(1.5);
+ motor[mogoLift] = 0;
+ startTask(fullreverse);
+ wait(2);
+ motor[mogoLift] = 63;
+ wait(1.5);
+ motor[mogoLift] = 0;
  startTask(stopmotors);
 }
 
@@ -169,22 +203,13 @@ task ArcadeDrive()
 		wait1Msec( 25 );
 	}
 }
-task mogoLiftControl() {
-	motor[mogoLift] = -vexRT[Ch2];
-	while(SensorValue[mogoLimit] == 1) {
-		wait(1);
-		motor[mogoLift] = 127;
-		wait(2);
-		motor[mogoLift] = -vexRT[Ch2];
-	}
-}
 task usercontrol()
 {
 
 	//SensorValue(clawPotentiometer) = 0;
 	// Start motor slew rate control
 	startTask(MotorSlewRateTask);
-motor[clawMotor] = 63;
+	motor[clawMotor] = 63;
 	// Start driver control tasks
 	startTask(ArcadeDrive);
 
@@ -193,9 +218,7 @@ motor[clawMotor] = 63;
 	{
 		wait1Msec( 100 );
 
-		//motor[mogoLift] = -vexRT[Ch2];
-		startTask(mogoLiftControl);
-		motor[internalStack] = vexRT[Ch2Xmtr2]; //run the two lift system motors off of channel 2 input
+		motor[mogoLift] = -vexRT[Ch2];
 		motor[liftMotor] = vexRT[Ch3Xmtr2]; //run the other two lift system motors off of channel 3 input
 	}
 }
