@@ -46,21 +46,30 @@ motor[mogoLift] = 0;
  motor[mogoLift] = 63;
  wait(1.5);
  motor[mogoLift] = 0;
- while(SensorValue[rightEncoder] > 100) {
+ while(SensorValue[rightEncoder] > 442) {
    startTask(fullreverse);
  }
  startTask(stopmotors);
  SensorValue[rightEncoder] = 0;
  SensorValue[leftEncoder] = 0;
- while(SensorValue[rightEncoder] < 248) {
-   motor[DriveRight_1] = 50;
-   motor[DriveRight_2] = 50;
+ while(SensorValue[rightEncoder] > -500) {
+   motor[DriveLeft_1] = 50;
+   motor[DriveLeft_2] = 50;
+   motor[DriveRight_1] = -50;
+   motor[DriveRight_2] = -50;
+ }
+ startTask(stopmotors);
+ while(SensorValue[rightEncoder] < 450) {
+   startTask(fullspeed);
  }
  startTask(stopmotors);
  motor[mogoLift] = -63;
  wait(1.5);
  motor[mogoLift] = 0;
+ motor[mogoLift] = 63;
+ wait(1.5);
+ motor[mogoLift] = 0;
  startTask(fullreverse);
- wait(.25);
+ wait(3);
  startTask(stopmotors);
 }
