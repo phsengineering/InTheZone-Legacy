@@ -66,10 +66,10 @@ motor[mogoLift] = 0;
  motor[mogoLift] = -63;
  wait(1.5);
  motor[mogoLift] = 0;
+ startTask(fullreverse);
+ wait(2);
  motor[mogoLift] = 63;
  wait(1.5);
  motor[mogoLift] = 0;
- startTask(fullreverse);
- wait(3);
  startTask(stopmotors);
 }
