@@ -23,24 +23,27 @@ void pre_auton()
 	//SensorValue[rightEncoder] = 0;
 	//SensorValue[leftEncoder] = 0;
 }
+task fullspeed() {
+
+  motor[DriveLeft_1] = 127;
+  motor[DriveLeft_2] = 127;
+  motor[DriveRight_1] = 127;
+  motor[DriveRight_2] = 127;
+}
+task stopmotors() {
+
+  motor[DriveLeft_1] = 0;
+  motor[DriveLeft_2] = 0;
+  motor[DriveRight_1] = 0;
+  motor[DriveRight_2] = 0;
+}
 task autonomous() {
-	motor[internalStack] = 63; //bring up the lift system motor
-	motor[liftMotor] = 63; //bring up the lift system motor
-	wait(1);
-	motor[liftMotor] = 0;
-	motor[internalStack] = 0;
-	motor[DriveLeft_1] = 127; //move forward at full speed for 2 seconds
-	motor[DriveLeft_2] = 127;
-	motor[DriveRight_1] = 127;
-	motor[DriveRight_2] = 127;
-	wait1Msec(2000);
-	motor[DriveLeft_1] = 0; //stop all motors
-	motor[DriveLeft_2] = 0;
-	motor[DriveRight_1] = 0;
-	motor[DriveRight_2] = 0;
-	motor[clawMotor] = 63; //open the claw, get ready for driver control
-	wait(1);
-	motor[clawMotor] = 0;
+motor[mogoLift] = -63;
+wait(1);
+motor[mogoLift] = 0;
+ startTask(fullspeed);
+ wait(3);
+ startTask(stopmotors);
 }
 
 #define     JOY_DRIVE_V     vexJSLeftV
