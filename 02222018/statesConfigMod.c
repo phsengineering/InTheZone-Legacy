@@ -4,6 +4,7 @@
 #pragma config(Motor,  port2,           mogoLift,      tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port3,           clawMotor,     tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port4,           liftMotor,     tmotorServoContinuousRotation, openLoop)
+#pragma config(Motor,  port5,           internalStack, tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port6,           DriveRight_1,  tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port7,           DriveRight_2,  tmotorServoContinuousRotation, openLoop)
 #pragma config(Motor,  port8,           DriveLeft_1,   tmotorServoContinuousRotation, openLoop, reversed)
@@ -209,7 +210,6 @@ task usercontrol()
 	//SensorValue(clawPotentiometer) = 0;
 	// Start motor slew rate control
 	startTask(MotorSlewRateTask);
-	motor[clawMotor] = 63;
 	// Start driver control tasks
 	startTask(ArcadeDrive);
 
@@ -217,8 +217,9 @@ task usercontrol()
 	while( true )
 	{
 		wait1Msec( 100 );
-
+		motor[clawMotor] = 63;
 		motor[mogoLift] = -vexRT[Ch2];
 		motor[liftMotor] = vexRT[Ch3Xmtr2]; //run the other two lift system motors off of channel 3 input
+		motor[internalStack] = vexRT[Ch2Xmtr2];
 	}
 }
