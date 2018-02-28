@@ -41,6 +41,9 @@ task stopmotors() {
   motor[DriveRight_2] = 0;
 }
 task autonomous() {
+	motor[liftMotor] = 127;
+	wait(1);
+	motor[liftMotor] = 0;
 	motor[mogoLift] = -63;
 wait(2);
 motor[mogoLift] = 0;
@@ -204,6 +207,22 @@ task ArcadeDrive()
 		wait1Msec( 25 );
 	}
 }
+task stackControl() {
+	
+	while(vexRT[Btn8UXmtr2] == 1) {
+		motor[internalStack] = 127;
+	}
+	while(vexRT[Btn8DXmtr2] == 1) {
+		motor[internalStack] = -127;
+	}
+	while(vexRT[Btn6UXmtr2] == 1) {
+		motor[clawMotor] = -120;
+	}
+	while(vexRT[Btn5UXmtr2] == 1) {
+		motor[clawMotor] = 120;
+	}
+}
+
 task usercontrol()
 {
 
@@ -212,14 +231,13 @@ task usercontrol()
 	startTask(MotorSlewRateTask);
 	// Start driver control tasks
 	startTask(ArcadeDrive);
-
 	// Everything done in other t\\asks
 	while( true )
 	{
 		wait1Msec( 100 );
-		motor[clawMotor] = 63;
+		//motor[clawMotor] = 120;
+		startTask(stackControl);
 		motor[mogoLift] = -vexRT[Ch2];
 		motor[liftMotor] = vexRT[Ch3Xmtr2]; //run the other two lift system motors off of channel 3 input
-		motor[internalStack] = vexRT[Ch2Xmtr2];
 	}
 }
