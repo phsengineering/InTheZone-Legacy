@@ -1,3 +1,4 @@
+#pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    mogoTrack,      sensorPotentiometer)
 #pragma config(Sensor, I2C_1,  rightEncoder,   sensorNone)
 #pragma config(Sensor, I2C_2,  leftEncoder,    sensorNone)
@@ -50,6 +51,10 @@ motor[mogoLift] = 0;
  SensorValue[leftEncoder] = 0;
  SensorValue[rightEncoder] = 0;
  while(SensorValue[rightEncoder] < 1050) {
+ //motor[DriveLeft_1] = 63;
+ //motor[DriveLeft_2] = 63;
+ //motor[DriveRight_1] = 70;
+ //motor[DriveRight_2] = 70;
  startTask(fullspeed);
 }
  startTask(stopmotors);
@@ -91,10 +96,10 @@ motor[mogoLift] = 0;
 #define MOTOR_NUM               kNumbOfTotalMotors
 #define MOTOR_MAX_VALUE         127
 #define MOTOR_MIN_VALUE         (-127)
-#define MOTOR_DEFAULT_SLEW_RATE 10      // Default will cause 375mS from full fwd to rev
+#define MOTOR_DEFAULT_SLEW_RATE 9      // Default will cause 375mS from full fwd to rev
 #define MOTOR_FAST_SLEW_RATE    256     // essentially off
-#define MOTOR_TASK_DELAY        16      // task 1/frequency in mS (about 66Hz)
-#define MOTOR_DEADBAND          11
+#define MOTOR_TASK_DELAY        14      // task 1/frequency in mS (about 66Hz)
+#define MOTOR_DEADBAND          10
 // Array to hold requested speed for the motors
 int motorReq[ MOTOR_NUM ];
 
@@ -207,19 +212,12 @@ task ArcadeDrive()
 		wait1Msec( 25 );
 	}
 }
-task stackControl() {
-	
-	while(vexRT[Btn8UXmtr2] == 1) {
-		motor[internalStack] = 127;
-	}
-	while(vexRT[Btn8DXmtr2] == 1) {
-		motor[internalStack] = -127;
-	}
+task clawControl() {
 	while(vexRT[Btn6UXmtr2] == 1) {
-		motor[clawMotor] = -120;
-	}
-	while(vexRT[Btn5UXmtr2] == 1) {
 		motor[clawMotor] = 120;
+	}
+	while(vexRT[Btn6DXmtr2] == 1) {
+		motor[clawMotor] = -120;
 	}
 }
 
@@ -236,7 +234,8 @@ task usercontrol()
 	{
 		wait1Msec( 100 );
 		//motor[clawMotor] = 120;
-		startTask(stackControl);
+		startTask(clawControl);
+		motor[internalStack] = vexRT[Ch2Xmtr2];
 		motor[mogoLift] = -vexRT[Ch2];
 		motor[liftMotor] = vexRT[Ch3Xmtr2]; //run the other two lift system motors off of channel 3 input
 	}
